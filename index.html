@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CEREBRA: Dungeon Director</title>
+    <meta name="description" content="CEREBRA is an adaptive boss arena where the dungeon studies your habits, predicts your routes, and turns your past mistakes into live threats.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="bootScreen" class="bootScreen active" aria-live="polite">
+    <div class="bootContent">
+        <p class="eyebrow">Adaptive Dungeon Intelligence</p>
+        <h1 id="bootTitle">CEREBRA</h1>
+        <p id="bootSubtitle" class="bootSubtitle">Dungeon Director's Project Mnemosyne</p>
+        <p id="bootTagline" class="bootTagline">The dungeon learns. The hunter predicts. Your fear becomes level geometry.</p>
+        <div class="bootLoader">
+            <span id="bootProgress"></span>
+        </div>
+        <p id="bootStatus" class="bootStatus">Booting cognition lattice...</p>
+    </div>
+</div>
+
+<header id="topBar" class="chrome shell">
+    <div class="brand">
+        <p class="eyebrow">Adaptive Dungeon Intelligence</p>
+        <h1>CEREBRA: Dungeon Director</h1>
+        <p class="subtitle">Survive an arena where the boss studies your habits and weaponizes your last mistakes.</p>
+    </div>
+    <div class="statStrip">
+        <div class="statCard">
+            <span>Score</span>
+            <strong id="score">0</strong>
+        </div>
+        <div class="statCard bestCard">
+            <span>Best</span>
+            <strong id="bestScore">0</strong>
+        </div>
+        <div class="statCard">
+            <span>Time</span>
+            <strong id="timeSurvived">00:00</strong>
+        </div>
+    </div>
+    <div class="topActions">
+        <button id="themeToggle" type="button" class="ghost compact">Light Mode</button>
+        <button id="pauseButton" type="button" class="ghost compact">Pause</button>
+        <button id="menuButton" type="button" class="ghost compact menuButton" aria-expanded="false" aria-controls="menuPanel">...</button>
+    </div>
+</header>
+
+<div id="menuPanel" class="menuPanel shell hidden" role="menu">
+    <button id="helpButton" type="button" class="ghost compact">Help</button>
+    <button id="quitButton" type="button" class="ghost compact">Quit To Home</button>
+</div>
+
+<aside id="uiPanel" class="chrome shell">
+    <h2>CEREBRA CORE</h2>
+    <p id="phase">Phase: --</p>
+    <p id="objective">Objective: --</p>
+    <div id="telemetryDetails" class="telemetryDetails">
+        <p id="type">Type: --</p>
+        <p id="prediction">Prediction: --</p>
+        <p id="action">Action: --</p>
+        <p id="difficulty">Difficulty: --</p>
+        <p id="memoryCount">Echoes: --</p>
+    </div>
+</aside>
+
+<section id="playerPanel" class="chrome shell">
+    <div class="meterRow">
+        <div class="meterHeader">
+            <span>Health</span>
+            <strong id="healthValue">100</strong>
+        </div>
+        <div class="meter">
+            <span id="healthFill"></span>
+        </div>
+    </div>
+
+    <div class="meterRow">
+        <div class="meterHeader">
+            <span>Dash</span>
+            <strong id="dashValue">Ready</strong>
+        </div>
+        <div class="meter dash">
+            <span id="dashFill"></span>
+        </div>
+    </div>
+
+    <p class="hint">Collect blue shards to heal, keep moving to break predictions, and survive long enough to force new CEREBRA phases.</p>
+    <div class="settingsRow" aria-label="Gameplay options">
+        <label class="toggle">
+            <input id="reducedMotionToggle" type="checkbox">
+            <span>Reduced Motion</span>
+        </label>
+        <label class="toggle">
+            <input id="highContrastToggle" type="checkbox">
+            <span>High Contrast</span>
+        </label>
+    </div>
+</section>
+
+<div id="messageBox" class="shell" role="status" aria-live="polite"></div>
+
+<div id="overlay" class="overlay visible">
+    <div id="overlayCard" class="overlayCard">
+        <p id="overlayEyebrow" class="eyebrow">Adaptive dungeon intelligence online</p>
+        <h2 id="overlayTitle">Enter the simulation</h2>
+        <p id="overlayText">CEREBRA learns your movement patterns, predicts escape routes, and turns your past deaths into live threats.</p>
+        <div id="homePanel" class="contextPanel">
+            <nav class="sectionNav" aria-label="Website sections">
+                <button type="button" class="sectionLink ghost compact" data-section="overviewSection">
+                    <span aria-hidden="true">◇</span>
+                    <span>Overview</span>
+                </button>
+                <button type="button" class="sectionLink ghost compact" data-section="innovationSection">
+                    <span aria-hidden="true">AI</span>
+                    <span>Innovation</span>
+                </button>
+                <button type="button" class="sectionLink ghost compact" data-section="settingsSection">
+                    <span aria-hidden="true">◫</span>
+                    <span>Setup</span>
+                </button>
+                <button type="button" class="sectionLink ghost compact" data-section="teamSection">
+                    <span aria-hidden="true">✦</span>
+                    <span>Team</span>
+                </button>
+                <button type="button" class="sectionLink ghost compact" data-section="systemSection">
+                    <span aria-hidden="true">+</span>
+                    <span>System</span>
+                </button>
+                <button type="button" class="sectionLink ghost compact" data-nav-action="tutorial">
+                    <span aria-hidden="true">?</span>
+                    <span>Tutorial</span>
+                </button>
+                <button id="themeToggleHome" type="button" class="sectionLink ghost compact">
+                    <span aria-hidden="true">◐</span>
+                    <span>Light Mode</span>
+                </button>
+            </nav>
+            <section id="overviewSection" class="heroPanel">
+                <div class="heroMark" aria-hidden="true">
+                    <div class="sigil">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <div class="heroCopy">
+                    <div class="heroBadgeRow">
+                        <span class="versionBadge">Build v0.5</span>
+                        <span class="statusBadge">Adaptive Arena Prototype</span>
+                    </div>
+                    <h3>Adaptive Arena Prototype, Refined for Play</h3>
+                    <p>Every run teaches the boss something. Every defeat leaves behind memory echoes. Survival alone is not enough. You need to out-adapt the intelligence hunting you.</p>
+                </div>
+            </section>
+            <section class="featureGrid" aria-label="Core features">
+                <article class="featureCard">
+                    <span>Adaptive Boss</span>
+                    <strong>Reads your movement style</strong>
+                    <p>CEREBRA samples how you move, classifies your habits, and shifts counters in real time.</p>
+                </article>
+                <article class="featureCard">
+                    <span>Memory System</span>
+                    <strong>Past deaths become hazards</strong>
+                    <p>Echoes from previous failures remain in the arena, turning old mistakes into future danger zones.</p>
+                </article>
+                <article class="featureCard">
+                    <span>Final Objective</span>
+                    <strong>Breach the core to win</strong>
+                    <p>Survive into Ascension, collect breach shards, and hold the upload ring while the system collapses.</p>
+                </article>
+            </section>
+            <section id="innovationSection" class="insightPanel" aria-label="Innovation snapshot">
+                <div class="sectionHeading">
+                    <span>Innovation Snapshot</span>
+                    <strong>How the AI Works</strong>
+                </div>
+                <div class="insightGrid">
+                    <article class="insightCard">
+                        <span>01</span>
+                        <strong>Movement sampling</strong>
+                        <p>The game samples direction, tempo, and lane preference while you play.</p>
+                    </article>
+                    <article class="insightCard">
+                        <span>02</span>
+                        <strong>Player classification</strong>
+                        <p>Your run is tagged as wall-hugging, lane-running, hyper-mobile, erratic, or adaptive.</p>
+                    </article>
+                    <article class="insightCard">
+                        <span>03</span>
+                        <strong>Predictive targeting</strong>
+                        <p>CEREBRA predicts likely movement and places pressure where you are about to go.</p>
+                    </article>
+                    <article class="insightCard">
+                        <span>04</span>
+                        <strong>Counter pattern selection</strong>
+                        <p>Attack patterns are selected to punish your strongest repeated habit.</p>
+                    </article>
+                    <article class="insightCard">
+                        <span>05</span>
+                        <strong>Memory echoes</strong>
+                        <p>Past deaths stay behind as corruption zones, letting the dungeon remember mistakes across runs.</p>
+                    </article>
+                    <article class="insightCard">
+                        <span>06</span>
+                        <strong>Post-run analytics</strong>
+                        <p>Each run ends with behavior metrics, AI counters, and a readable tactical summary.</p>
+                    </article>
+                </div>
+            </section>
+            <section id="settingsSection" class="configGrid" aria-label="Run settings">
+                <div class="levelCard">
+                    <div class="levelCardHeader">
+                        <span>Level Progression</span>
+                        <strong id="levelBadge" class="rankBadge">Bronze</strong>
+                    </div>
+                    <strong id="levelLabel">Level 1 / Endless</strong>
+                    <p id="levelName" class="levelName">Observation Chamber</p>
+                    <p id="levelGoal">Goal: Clear the current level to reveal the next one.</p>
+                    <div class="levelMetaRow">
+                        <span id="levelState" class="levelStateChip current">Current Run Target</span>
+                        <span id="levelRank" class="levelRank">Rank: Bronze</span>
+                    </div>
+                    <div class="levelControls">
+                        <button id="levelPrev" type="button" class="ghost compact" disabled>Sequential</button>
+                        <span id="levelStars" class="levelStarsInline">Stars: 0/3</span>
+                        <button id="levelNext" type="button" class="ghost compact" disabled>Unlock On Clear</button>
+                    </div>
+                    <div id="levelStarIcons" class="levelStarIcons" aria-label="Level stars">
+                        <span class="levelStarIcon">☆</span>
+                        <span class="levelStarIcon">☆</span>
+                        <span class="levelStarIcon">☆</span>
+                    </div>
+                    <p id="unlockNotice" class="unlockNotice hidden">New level unlocked.</p>
+                </div>
+                <div class="progressionCard">
+                    <div class="sectionHeading compactHeading">
+                        <span>Campaign Timeline</span>
+                        <strong>Latest Unlocked Levels</strong>
+                    </div>
+                    <div id="levelGrid" class="levelGrid" aria-label="Latest unlocked level progression"></div>
+                </div>
+                <label class="configField">
+                    <span>Difficulty</span>
+                    <select id="difficultySelect">
+                        <option value="rookie">Rookie</option>
+                        <option value="operative" selected>Operative</option>
+                        <option value="director">Director</option>
+                    </select>
+                </label>
+                <label class="configField">
+                    <span>Arena Theme</span>
+                    <select id="arenaSelect">
+                        <option value="mnemosyne" selected>Mnemosyne Vault</option>
+                        <option value="fracture">Fracture Grid</option>
+                        <option value="eclipse">Eclipse Forge</option>
+                    </select>
+                </label>
+                <label class="configField">
+                    <span>Audio Volume <strong id="volumeValue">85%</strong></span>
+                    <input id="volumeSlider" type="range" min="0" max="100" step="1" value="85">
+                </label>
+                <label class="configField">
+                    <span>Text Scale <strong id="textScaleValue">100%</strong></span>
+                    <input id="textScaleSlider" type="range" min="90" max="120" step="5" value="100">
+                </label>
+            </section>
+            <section id="systemSection" class="supportGrid" aria-label="System notes">
+                <article class="supportCard">
+                    <span>Known Controls</span>
+                    <p>Move: WASD or Arrow Keys</p>
+                    <p>Dash: Space or Shift</p>
+                    <p>Pause: P</p>
+                    <p>Restart after run: R</p>
+                </article>
+                <article class="supportCard">
+                    <span>Browser Compatibility</span>
+                    <p>Optimized for current Chrome, Edge, and Firefox builds with canvas and local storage enabled.</p>
+                </article>
+                <article class="supportCard">
+                    <span>Run Flow</span>
+                    <p>Start from home, pause anytime, restart after defeat, or quit cleanly back to home from the menu or overlay actions.</p>
+                </article>
+            </section>
+            <section id="teamSection" class="trustGrid" aria-label="Project info">
+                <article class="trustCard">
+                    <span>Team</span>
+                    <p>AMIRTHA VARSHINI K</p>
+                    <p>AKSHAYA LAKSHMI K A</p>
+                    <p>AKSHAYA A</p>
+                    <p>Panimalar Engineering College, B.E. CSE Department</p>
+                </article>
+                <article class="trustCard">
+                    <span>About</span>
+                    <p>CEREBRA is a stylized indie boss-survival experience focused on adaptive enemy behavior, prediction pressure, and post-run analysis.</p>
+                </article>
+                <article class="trustCard">
+                    <span>Privacy</span>
+                    <p>This build stores best score, accessibility settings, and AI memory locally in your browser for gameplay continuity.</p>
+                </article>
+            </section>
+        </div>
+        <div id="tutorialPanel" class="contextPanel hidden" aria-live="polite">
+            <div class="stepGrid">
+                <article class="stepCard">
+                    <span>Step 1</span>
+                    <strong>Move, dash, read warnings</strong>
+                    <p>Use WASD or Arrow Keys to move. Dash with Space or Shift to break pressure waves, lane strikes, and predictive traps.</p>
+                </article>
+                <article class="stepCard">
+                    <span>Step 2</span>
+                    <strong>Break the AI's assumptions</strong>
+                    <p>CEREBRA studies your repeated direction changes and classifies your playstyle. Change tempo to stop giving it easy reads.</p>
+                </article>
+                <article class="stepCard">
+                    <span>Step 3</span>
+                    <strong>Heal, survive, then breach</strong>
+                    <p>Blue shards heal you. In Ascension, golden breach shards charge the core objective. Hold the central upload ring to win.</p>
+                </article>
+            </div>
+            <div class="tutorialCallout">
+                <h3>What Are Echoes?</h3>
+                <p>Echoes are corruption zones created from previous deaths. They are the AI's memory made physical. Resetting memory clears them.</p>
+            </div>
+        </div>
+        <div id="gamesHubPanel" class="contextPanel hidden" aria-live="polite">
+            <div class="gamesHubIntro">
+                <h3>Other Games</h3>
+                <p>Project Mnemosyne can now branch into two focused mini-game experiences without affecting the core CEREBRA arena.</p>
+            </div>
+            <div class="gamesHubGrid">
+                <article class="gameHubCard">
+                    <span>Mini Game 01</span>
+                    <strong>NeuroDrive</strong>
+                    <p>Control your car, avoid incoming traffic, and survive rising speed while the AI reshapes traffic around your dodge habits.</p>
+                    <div class="gameHubTags">
+                        <span>Car Avoidance</span>
+                        <span>Adaptive AI</span>
+                        <span>Traffic Pressure</span>
+                    </div>
+                    <button type="button" class="ghost compact" data-open-game="neuro-drive">Open Dashboard</button>
+                </article>
+                <article class="gameHubCard">
+                    <span>Mini Game 02</span>
+                    <strong>Chaos Reaction Runner</strong>
+                    <p>Your runner moves automatically. Jump or duck incoming hazards while the AI reads your timing rhythm and syncs the next obstacle to it.</p>
+                    <div class="gameHubTags">
+                        <span>Reaction</span>
+                        <span>Timing AI</span>
+                        <span>Arcade Flow</span>
+                    </div>
+                    <button type="button" class="ghost compact" data-open-game="chaos-runner">Open Dashboard</button>
+                </article>
+            </div>
+        </div>
+        <div id="miniGamePanel" class="contextPanel hidden" aria-live="polite">
+            <div class="miniGameHeader">
+                <div>
+                    <p id="miniGameEyebrow" class="eyebrow">Mini Game</p>
+                    <h3 id="miniGameTitle">NeuroDrive</h3>
+                    <p id="miniGameDescription" class="miniGameDescription">A self-contained mini-game dashboard inside Project Mnemosyne.</p>
+                </div>
+                <button id="miniGameBackButton" type="button" class="ghost compact">Back to Games</button>
+            </div>
+
+            <section id="neuroDriveGame" class="miniGameSurface hidden" aria-label="NeuroDrive dashboard">
+                <div class="miniGameStats">
+                    <article class="miniGameStat">
+                        <span>Score</span>
+                        <strong id="neuroDriveScore">0</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Best</span>
+                        <strong id="neuroDriveBest">0</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Lives</span>
+                        <strong id="neuroDriveLives">5</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Speed</span>
+                        <strong id="neuroDriveSpeed">1.0x</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>AI Read</span>
+                        <strong id="neuroDriveFocus">Scanning lanes</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Turbo</span>
+                        <strong id="neuroDriveBoostState">Ready</strong>
+                    </article>
+                </div>
+                <p id="neuroDriveStatus" class="miniGameStatus">Desktop: use A/D or Left/Right. Tap Boost Burst for a louder, brighter speed surge.</p>
+                <div id="neuroDriveArena" class="neuroDriveArena" aria-label="NeuroDrive arena">
+                    <div class="roadHorizon"></div>
+                    <div class="roadGlow"></div>
+                    <div class="roadScanlines"></div>
+                    <div class="roadShoulder shoulderLeft"></div>
+                    <div class="roadShoulder shoulderRight"></div>
+                    <div class="roadLane laneLeft"></div>
+                    <div class="roadLane laneCenter"></div>
+                    <div class="roadLane laneRight"></div>
+                    <div id="neuroDrivePlayer" class="neuroDrivePlayer" aria-label="Player car">
+                        <span class="carBadge">NX-1</span>
+                    </div>
+                    <div id="neuroDriveTraffic" class="neuroDriveTraffic"></div>
+                </div>
+                <div class="miniGameButtons">
+                    <button id="neuroDriveStartButton" type="button">Start NeuroDrive</button>
+                    <button id="neuroDriveBoostButton" type="button">Boost Burst</button>
+                    <button id="neuroDriveResetButton" type="button" class="ghost">Reset Drive</button>
+                </div>
+                <div class="miniGameTouchControls touchOnly" aria-label="NeuroDrive touch controls">
+                    <button id="neuroDriveLeftButton" type="button" class="ghost">Steer Left</button>
+                    <button id="neuroDriveRightButton" type="button" class="ghost">Steer Right</button>
+                </div>
+            </section>
+
+            <section id="chaosRunnerGame" class="miniGameSurface hidden" aria-label="Chaos Reaction Runner dashboard">
+                <div class="miniGameStats">
+                    <article class="miniGameStat">
+                        <span>Score</span>
+                        <strong id="chaosRunnerScore">0</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Best</span>
+                        <strong id="chaosRunnerBest">0</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>Lives</span>
+                        <strong id="chaosRunnerLives">5</strong>
+                    </article>
+                    <article class="miniGameStat">
+                        <span>AI Read</span>
+                        <strong id="chaosRunnerAI">Opening read</strong>
+                    </article>
+                </div>
+                <p id="chaosRunnerStatus" class="miniGameStatus">Desktop: use W or Up to jump, S or Down to duck. Mobile: use the touch controls below.</p>
+                <div id="chaosRunnerArena" class="runnerArena" aria-label="Chaos Reaction Runner arena">
+                    <div class="runnerBackdrop"></div>
+                    <div class="runnerLane runnerLaneTop"></div>
+                    <div class="runnerLane runnerLaneBottom"></div>
+                    <div class="runnerImpactLine">AI timing line</div>
+                    <div id="runnerCharacter" class="runnerCharacter">Runner</div>
+                    <div id="runnerObstacle" class="runnerObstacle hidden">Obstacle</div>
+                </div>
+                <div class="miniGameButtons">
+                    <button id="chaosRunnerStartButton" type="button">Start Runner</button>
+                    <button id="chaosRunnerResetButton" type="button" class="ghost">Reset Run</button>
+                </div>
+                <div class="miniGameTouchControls touchOnly" aria-label="Chaos Reaction Runner touch controls">
+                    <button id="chaosRunnerJumpTouchButton" type="button" class="ghost">Jump</button>
+                    <button id="chaosRunnerDuckTouchButton" type="button" class="ghost">Duck</button>
+                </div>
+            </section>
+        </div>
+        <div id="termsPanel" class="contextPanel hidden" aria-live="polite">
+            <div class="termsCard">
+                <h3>Terms and Conditions</h3>
+                <p>This project stores local gameplay data such as best score, unlocked levels, stars earned, accessibility preferences, and AI memory only in your browser. By continuing, you agree to use the game responsibly and understand that visual and audio intensity may increase during play.</p>
+                <p>You must accept these terms to continue into the website and the game experience.</p>
+                <label class="toggle termsToggle">
+                    <input id="termsCheckbox" type="checkbox">
+                    <span>I agree to the terms and conditions</span>
+                </label>
+                <div class="termsActions">
+                    <button id="termsContinue" type="button">Continue</button>
+                </div>
+                <p id="termsError" class="termsError hidden">Agree to the terms and conditions for using or playing the game.</p>
+            </div>
+        </div>
+        <div id="resultsPanel" class="resultsPanel hidden" aria-live="polite">
+            <div class="resultsGrid">
+                <article class="resultCard">
+                    <span>Final Score</span>
+                    <strong id="resultsScore">0</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Survival</span>
+                    <strong id="resultsTime">00:00</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Phase</span>
+                    <strong id="resultsPhase">--</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Player Type</span>
+                    <strong id="resultsType">--</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Shards</span>
+                    <strong id="resultsShards">0</strong>
+                </article>
+                <article class="resultCard">
+                    <span>AI Counter</span>
+                    <strong id="resultsCounter">--</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Best Score</span>
+                    <strong id="resultsBest">0</strong>
+                </article>
+                <article class="resultCard">
+                    <span>Adapt Level</span>
+                    <strong id="resultsAdapt">--</strong>
+                </article>
+            </div>
+            <div class="metricsPanel">
+                <div class="metricRow">
+                    <span>Aggression</span>
+                    <div class="metricBar"><span id="metricAggression"></span></div>
+                </div>
+                <div class="metricRow">
+                    <span>Mobility</span>
+                    <div class="metricBar"><span id="metricMobility"></span></div>
+                </div>
+                <div class="metricRow">
+                    <span>Predictability</span>
+                    <div class="metricBar"><span id="metricPredictability"></span></div>
+                </div>
+                <div class="metricRow">
+                    <span>Adaptability</span>
+                    <div class="metricBar"><span id="metricAdaptability"></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="overlayActions">
+            <button id="startButton" type="button">Start Run</button>
+            <button id="tutorialButton" type="button" class="ghost">How to Play</button>
+            <button id="otherGamesButton" type="button" class="ghost">Other Games</button>
+            <button id="restartRunButton" type="button" class="ghost hidden">Restart Run</button>
+            <button id="quitOverlayButton" type="button" class="ghost hidden">Quit To Home</button>
+            <button id="viewResultsButton" type="button" class="ghost hidden">View Results</button>
+            <button id="resetMemoryButton" type="button" class="ghost">Reset AI Memory</button>
+        </div>
+        <p class="controls">Move with WASD or Arrow Keys. Dash with Space or Shift. Press Enter to start. Press R to restart after defeat.</p>
+        <p id="overlayMeta" class="overlayMeta">Build v0.5 Adaptive Arena | Project Mnemosyne</p>
+    </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+<div id="canvasFallback" class="canvasFallback hidden" role="alert">
+    <div class="canvasFallbackCard">
+        <p class="eyebrow">Canvas unavailable</p>
+        <h2>Fallback Interface Active</h2>
+        <p>This browser cannot start the arena renderer right now. Try Chrome, Edge, or Firefox with hardware acceleration and canvas enabled.</p>
+        <button id="fallbackHomeButton" type="button">Open Home Overview</button>
+    </div>
+</div>
+
+<section id="touchControls" class="chrome shell" aria-label="Touch controls">
+    <div class="dpad">
+        <button type="button" class="touch up" data-key="ArrowUp">▲</button>
+        <div class="middleRow">
+            <button type="button" class="touch left" data-key="ArrowLeft">◀</button>
+            <button type="button" class="touch right" data-key="ArrowRight">▶</button>
+        </div>
+        <button type="button" class="touch down" data-key="ArrowDown">▼</button>
+    </div>
+    <button type="button" id="dashTouch" class="touch dashTouch" data-key="Space">Dash</button>
+</section>
+
+<script src="main.js"></script>
+</body>
+</html>
